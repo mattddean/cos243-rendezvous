@@ -1,0 +1,53 @@
+
+ - User Stories - 
+
+Member Stories:
+ 1. Emails
+ 2. Passwords
+ 3. Core Hours
+ 4. Commitments
+ 
+Team Stories:
+ 1. Teams
+ 2. Team members
+
+Activity Stories:
+ 1. Proposed Activities and Time Slots
+ 2. Votes for/against time slots
+ 3. Confirmed Activities
+
+
+Key:
+  - One-to-one
+ -= One-to-many
+ =- Many-to-one
+ == Many-to-many
+ 
+Member:
+  - Email
+  - Password
+  - Core Hours
+ -= Commitments
+ == Team(s)
+
+Core Hours:
+  - Members
+
+Commitments:
+ =- Member
+  - Time Slots
+
+Teams:
+ == Members
+ -= Proposed Activities
+
+Activities:
+ =- Team
+ -= Possible time slots
+
+Time Slots:
+  - Commitments
+ =- Activities
+
+
+
