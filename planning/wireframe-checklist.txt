@@ -1,0 +1,20 @@
+
+3.2 User Stories
+Rendezvous implements these user stories. A member can:
+
+3.2.1 Member Stories
+Connect to Rendezvous using an email address and password. 
+Set core hours for each day of the week.
+View, add, update, and remove commitments.
+
+3.2.2 Team Stories
+Create a team.
+Join one or more teams.
+Leave a team.
+
+3.2.3 Activity Stories
+1. Propose an activity
+2. Vote to accept or reject time slots for a proposed activity.
+3. Schedule an activity proposed by that member by selecting from time slots accepted by the entire team.
+4. View a schedule of proposed activities and their confirmation status.
+5. View a schedule of confirmed activities.
