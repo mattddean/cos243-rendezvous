@@ -34,6 +34,9 @@ class Member extends Model {
 		  to: 'team.team_id'
 		}
 	  },
+	  booya: {
+		  
+	  }
 	};
   }
 }
