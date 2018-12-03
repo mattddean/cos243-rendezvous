@@ -1,7 +1,0 @@
-
-RENDEZVOUS
-
-We host on the database that was set up for us on Faraday.
-
-
-
