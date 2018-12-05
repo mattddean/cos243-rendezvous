@@ -22,10 +22,6 @@ const server = Hapi.server({
     port: 3000
 });
 
-Company = require('./Company');
-
-Employee = require('./Employee');
-
 server.route([
     //////////////// Create ////////////////
     {
