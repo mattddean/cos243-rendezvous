@@ -1,4 +1,4 @@
-const { Model } = require('objection');
+	const { Model } = require('objection');
 
 class Member extends Model {
   static get tableName() {
@@ -34,7 +34,14 @@ class Member extends Model {
 		  to: 'team.team_id'
 		}
 	  },
-	  
+	  core_hours: {
+		relation: Model.HasManyRelation,
+		modelClass: require('./Core_Hours'),
+		join: {
+		  from: 'member.member_email',
+		  to: 'core_hours.member_email'
+		}
+	  }
 	};
   }
 }

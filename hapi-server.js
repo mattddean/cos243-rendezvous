@@ -22,9 +22,16 @@ const server = Hapi.server({
     port: 3000
 });
 
-Company = require('./Company');
+Member = require('./Member');
+Vote = require('./Vote');
+Member_Team = require('./Member_Team');
+Core_Hours = require('./Core_Hours');
+Commitment = require('./Commitment');
+Proposed_Time = require('./Proposed_Time');
+Team = require('./Team');
+Activity = require('./Activity');
 
-Employee = require('./Employee');
+
 
 server.route([
     //////////////// Create ////////////////

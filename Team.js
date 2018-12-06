@@ -6,7 +6,14 @@ class Team extends Model {
   }
   static get relationMappings() {
 	return {
-		// To be configure
+		activity: {
+			relation: Model.HasManyRelation,
+			modelClass: require('./Activity'),
+			join: {
+			  from: 'team.team_id',
+			  to: 'activity.team_id'
+			}
+		}
 	};
   }
 }
