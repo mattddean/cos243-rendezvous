@@ -1,20 +1,10 @@
 <template>
     <div>
-        <h4 class="display-1">Sign Up</h4>
+        <h4 class="display-1">Sign In</h4>
 
-        <instructions details="Sign up for our nifty site." />
+        <instructions details="Sign in for our nifty site." />
 
         <v-form v-model="valid">
-            <v-text-field
-                v-model="firstName"
-                v-bind:rules="rules.required"
-                label="First name"
-            ></v-text-field>
-            <v-text-field
-                v-model="lastName"
-                v-bind:rules="rules.required"
-                label="Last name"
-            ></v-text-field>
             <v-text-field
                 v-model="email"
                 v-bind:rules="rules.email"
@@ -33,7 +23,7 @@
             >
             </v-text-field>
             <v-btn v-bind:disabled="!valid" v-on:click="handleSubmit"
-                >Sign Up
+                >Sign In
             </v-btn>
         </v-form>
 
@@ -65,15 +55,13 @@ import Instructions from "../components/Instructions.vue";
 import axios from "axios";
 
 export default {
-    name: "SignUpPage",
+    name: "SignInPage",
     components: {
         Instructions
     },
     data: function() {
         return {
             valid: false,
-            firstName: "",
-            lastName: "",
             email: "",
             password: "",
 
@@ -82,17 +70,11 @@ export default {
             dialogVisible: false,
 
             rules: {
-                required: [
-                    val => val.length > 0 || 'Required'
-                ],
                 email: [
                     val => /^\w+@\w+\.\w{2,}$/.test(val) || "Invalid e-mail"
                 ],
                 password: [
-                    val => /[A-Z]/.test(val) || "Need upper case letter",
-                    val => /[a-z]/.test(val) || "Need lower case letter",
-                    val => /\d/.test(val) || "Need digit",
-                    val => val.length >= 8 || "Minimum 8 characters"
+                    val => val.length >= 3 || "Minimum 3 characters"
                 ]
             }
         };
@@ -100,9 +82,7 @@ export default {
     methods: {
         handleSubmit: function() {
             axios
-                .post("/api/accounts", {
-                    firstName: this.firstName,
-                    lastName: this.lastName,
+                .post("/api/members", {
                     email: this.email,
                     password: this.password,
                 })

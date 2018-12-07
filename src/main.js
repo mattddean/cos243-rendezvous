@@ -9,9 +9,9 @@ import "vuetify/dist/vuetify.min.css";
 import "material-design-icons-iconfont/dist/material-design-icons.css";
 
 import Home from "./pages/Home.vue";
-import SignUp from "./pages/SignUp.vue";
+import SignIn from "./pages/SignIn.vue";
 import About from "./pages/About.vue";
-import Accounts from "./pages/Accounts.vue";
+import Members from "./pages/Members.vue";
 import ResetPassword from "./pages/ResetPassword.vue"; // NEW 
 
 import VueRouter from "vue-router";
@@ -21,9 +21,9 @@ const router = new VueRouter({
     mode: "history",
     routes: [
         {name: "home-page", path: "/", component: Home},
-        {name: "sign-up", path: "/sign-up", component: SignUp},
+        {name: "sign-in", path: "/sign-in", component: SignIn},
         {name: "about-us", path: "/about-us", component: About},
-        {name: "accounts", path: "/accounts", component: Accounts},		
+        {name: "members", path: "/members", component: Members},		
 		{name: "reset-password", path: "/reset-password", component: ResetPassword} // New route
     ]
 });

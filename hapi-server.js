@@ -56,14 +56,12 @@ async function init() {
     server.route([
         {
             method: "POST",
-            path: "/api/accounts",
+            path: "/api/members",
             config: {
-                description: "Sign up for an account",
+                description: "Sign into an account",
                 validate: {
                     payload: {
-                        firstName: Joi.string().required(),
-                        lastName: Joi.string().required(),
-                        email: Joi.string()
+                        member_email: Joi.string()
                             .email()
                             .required(),
                         password: Joi.string().required()
@@ -71,46 +69,33 @@ async function init() {
                 }
             },
             handler: async (request, h) => {
-                let resultSet = await knex("accounts")
+                let result = await knex("member")
                     .select()
-                    .where("email", request.payload.email);
-                if (resultSet.length > 0) {
+                    .where({
+						member_email: request.payload.member_email,
+						password: request.payload.password
+					});
+                if (result.length < 1) {
                     return {
                         ok: false,
-                        msge: `The account '${request.payload.email}' is already in use`
-                    };
-                }
-
-                let result = await knex("accounts").insert({
-                    firstname: request.payload.firstName,
-                    lastname: request.payload.lastName,
-                    email: request.payload.email,
-                    password: request.payload.password
-                });
-
-                if (result.rowCount === 1) {
-                    return {
-                        ok: true,
-                        msge: `Created account '${request.payload.email}'`
+                        msge: `The member email '${request.payload.email}' does not exist.`
                     };
                 } else {
                     return {
-                        ok: false,
-                        msge: `Couldn't add '${
-                            request.payload.email
-                        }' to the database`
+                        ok: true,
+                        msge: `Signed in to member '${request.payload.email}.'`
                     };
                 }
             }
         },
         {
             method: "GET",
-            path: "/api/accounts",
+            path: "/api/members",
             config: {
-                description: "Retrieve all accounts"
+                description: "Retrieve all members"
             },
             handler: async (request, h) => {
-                return knex("accounts").select("email", "firstname", "lastname");
+                return knex("member").select("member_email", "password");
             }
         },
 		
