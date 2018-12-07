@@ -1,18 +1,31 @@
-# Hapi RESTful API Server
+# ui-spa
 
-This sample code shows
-- A fully-documented RESTful API; 
-  refer to the `config` sections of the route configurations 
-  for examples.
-- Endpoints for the entire CRUD pattern
-- Use of [Lout](https://github.com/hapijs/lout) to publish documentation as a web page
+## User Interface
+```
+yarn install
+```
 
-## To run
-- Change to the directory containing this file
-- Install Node modules: `npm install`
-- Start the server: `node hapi-server.js`
+### Compiles and hot-reloads for development
+```
+yarn run serve
+```
 
-## To use
-- See the output from the server listing routes
-- Use Postman to access endpoints related to `company`
-- View documentation for routes at http://localhost:3000/docs
+### Compiles and minifies for production
+```
+yarn run build
+```
+
+### Lints and fixes files
+```
+yarn run lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
+
+## Application Server
+
+### Runs the application server
+```
+yarn hapi
+```

@@ -1,190 +1,214 @@
+// Standard Node modules
+const Path = require("path");
+
 // Knex
-const knex = require('knex')({
-    client: 'pg',
+const knex = require("knex")({
+    client: "pg",
     connection: {
-        host: 'localhost',
-        database: 'gabe_helmuth',
-		user: 'gabe_helmuth',
-		password: 'falodepa'
+        host: "faraday.cse.taylor.edu",
+        database: "gabe_helmuth",
+		user: "gabe_helmuth",
+		password: "falodepa"
     }
 });
-
-// Objection
-const Model = require('objection').Model;
-Model.knex(knex);
 
 // Hapi
-const Joi = require('joi');
-const Boom = require('boom');
-const Hapi = require('hapi');
+const Joi = require("joi"); // Input validation
+const Hapi = require("hapi"); // Server
+
 const server = Hapi.server({
-    host: 'localhost',
-    port: 3000
-});
-
-Member = require('./Member');
-Vote = require('./Vote');
-Member_Team = require('./Member_Team');
-Core_Hours = require('./Core_Hours');
-Commitment = require('./Commitment');
-Proposed_Time = require('./Proposed_Time');
-Team = require('./Team');
-Activity = require('./Activity');
-
-
-
-server.route([
-    //////////////// Create ////////////////
-    {
-        method: 'POST',
-        path: '/companies',
-        config: {
-            description: 'Create company',
-            validate: {
-                payload: {
-                    name: Joi.string().min(1).required(),
-                    city: Joi.string().min(1).required(),
-                    state: Joi.string().length(2).required()
-                }
-            }
-        },
-        handler: async (request, h) => {
-            let company = await Company.query().insert(request.payload);
-            return company;
-        }
-    },
-
-    //////////////// Retrieve ////////////////
-    {
-        method: 'GET',
-        path: '/companies',
-        config: {
-            description: 'Retrieve all companies'
-        },
-        handler: async (request, h) => {
-            return await Company.query();
-        }
-    },
-    {
-        method: 'GET',
-        path: '/companies/{company_id}',
-        config: {
-            description: 'Retrieve one company',
-            validate: {
-                params: {
-                    company_id: Joi.number().integer().min(0)
-                }
-            }
-        },
-        handler: async (request, h) => {
-            return await Company.query()
-                .where('id', request.params.company_id)
-                .eager('employees');
-        }
-    },
-
-    //////////////// Update ////////////////
-    {
-        method: 'PUT',
-        path: '/companies/{company_id}',
-        config: {
-            description: 'Replace a company',
-            validate: {
-                params: {
-                    company_id: Joi.number().integer().min(0)
-                },
-                payload: {
-                    name: Joi.string().min(1).required(),
-                    city: Joi.string().min(1).required(),
-                    state: Joi.string().length(2).required()
-                }
-            }
-        },
-        handler: async (request, h) => {
-            let rowsUpdated = await Company.query()
-                .update(request.payload)
-                .where('id', request.params.company_id);
-            return {updated: rowsUpdated};
-        }
-    },
-    {
-        method: 'PATCH',
-        path: '/companies/{company_id}',
-        config: {
-            description: 'Update a company',
-            validate: {
-                params: {
-                    company_id: Joi.number().integer().min(0)
-                },
-                payload: {
-                    name: Joi.string().min(1),
-                    city: Joi.string().min(1),
-                    state: Joi.string().length(2)
-                }
-            }
-        },
-        handler: async (request, h) => {
-            let rowsUpdated = await Company.query()
-                .update(request.payload)
-                .where('id', request.params.company_id);
-            return {updated: rowsUpdated};
-        }
-    },
-
-    //////////////// Delete ////////////////
-    {
-        method: 'DELETE',
-        path: '/companies/{company_id}',
-        config: {
-            description: 'Delete a company',
-            validate: {
-                params: {
-                    company_id: Joi.number().integer().min(0)
-                }
-            }
-        },
-        handler: async (request, h) => {
-            let rowsDeleted = await Company.query()
-                .delete()
-                .where('id', request.params.company_id);
-            if (rowsDeleted == 1) {
-                return {deleted: rowsDeleted};
-            } else {
-                return Boom.notFound(`Query returned ${rowsDeleted} rows`);
-            }
+    host: "localhost",
+    port: 3000,
+    routes: {
+        files: {
+            relativeTo: Path.join(__dirname, "dist")
         }
     }
-]);
-
-// Catch promises lacking a .catch.
-process.on('unhandledRejection', err => {
-    console.error(err);
-    process.exit(1);
 });
 
-// Fire up the server.
+Member = require('./tables/Member');
+Vote = require('./tables/Vote');
+Member_Team = require('./tables/Member_Team');
+Core_Hours = require('./tables/Core_Hours');
+Commitment = require('./tables/Commitment');
+Proposed_Time = require('./tables/Proposed_Time');
+Team = require('./tables/Team');
+Activity = require('./tables/Activity');
+
+
+
 async function init() {
-    // Configure plug-ins.
-    await server.register([
-        require('vision'),
-        require('inert'),
-        require('lout')
-    ]);
+    // Show routes at startup.
+    await server.register(require("blipp"));
 
-    await server.register(require('blipp'));
-
-    // Configure logging.
+    // Output logging information.
     await server.register({
-        plugin: require('hapi-pino'),
+        plugin: require("hapi-pino"),
         options: {
             prettyPrint: true
         }
     });
 
+    // Configure static file service.
+    await server.register(require("inert"));
+
+    // Configure routes.
+    server.route([
+        {
+            method: "POST",
+            path: "/api/accounts",
+            config: {
+                description: "Sign up for an account",
+                validate: {
+                    payload: {
+                        firstName: Joi.string().required(),
+                        lastName: Joi.string().required(),
+                        email: Joi.string()
+                            .email()
+                            .required(),
+                        password: Joi.string().required()
+                    }
+                }
+            },
+            handler: async (request, h) => {
+                let resultSet = await knex("accounts")
+                    .select()
+                    .where("email", request.payload.email);
+                if (resultSet.length > 0) {
+                    return {
+                        ok: false,
+                        msge: `The account '${request.payload.email}' is already in use`
+                    };
+                }
+
+                let result = await knex("accounts").insert({
+                    firstname: request.payload.firstName,
+                    lastname: request.payload.lastName,
+                    email: request.payload.email,
+                    password: request.payload.password
+                });
+
+                if (result.rowCount === 1) {
+                    return {
+                        ok: true,
+                        msge: `Created account '${request.payload.email}'`
+                    };
+                } else {
+                    return {
+                        ok: false,
+                        msge: `Couldn't add '${
+                            request.payload.email
+                        }' to the database`
+                    };
+                }
+            }
+        },
+        {
+            method: "GET",
+            path: "/api/accounts",
+            config: {
+                description: "Retrieve all accounts"
+            },
+            handler: async (request, h) => {
+                return knex("accounts").select("email", "firstname", "lastname");
+            }
+        },
+		
+		// New route
+		
+		{
+            method: "POST",
+            path: "/api/reset-password",
+            config: {
+                description: "Reset an account password",
+                validate: {
+                    payload: {
+						email: Joi.string()
+                            .email()
+                            .required(),
+						password: Joi.string().required(),
+                        newPassword1: Joi.string().required()
+                    }
+                }
+            },
+            handler: async (request, h) => {
+			 // Checks to see if email exists in database
+                let emailCheck = await knex("accounts")
+                    .select()
+                    .where("email", request.payload.email);
+                if (emailCheck.length == 0) {
+                    return {
+                        ok: false,
+                        msge: `The input account '${request.payload.email}' does not exist.`
+                    };
+                }
+				let passwordCheck = await knex("accounts")
+                    .select()
+                    .where("password", request.payload.password);
+                if (passwordCheck.length == 0) {
+                    return {
+                        ok: false,
+                        msge: `The input current password '${request.payload.password}' does not match the account '${request.payload.email}.'`
+                    };
+                }
+				console.log("Hey");
+				
+                let pwChange = await knex("accounts")
+					.update({
+						password: request.payload.newPassword1
+					})
+					.where("email", request.payload.email);
+				
+				return {
+					ok: true,
+					msge: `Updated password for '${request.payload.email}.'`
+				}
+				
+				// FIXME: This code was meant to check whether the new password was put in.
+				/*
+				let result = await knex("accounts")
+                    .select()
+                    .where("email", request.payload.email);
+                if (result.password == request.payload.newPassword1) {
+                    return {
+                        ok: true,
+                        msge: `Updated password for '${request.payload.email}.'`
+                    };
+                } else {
+					return {
+                        ok: false,
+                        msge: `Failed to update password for the account '${request.payload.email}.'`
+                    };
+				}
+				*/
+            }
+        },
+
+        {
+            method: "GET",
+            path: "/{param*}",
+            config: {
+                description: "Production Application"
+            },
+            handler: {
+                directory: {
+                    path: ".",
+                    redirectToSlash: true,
+                    index: true
+                }
+            }
+        }
+    ]);
+
     // Start the server.
     await server.start();
-    console.log(`Server running at ${server.info.uri}`);
+    server.logger().info(`Server running at ${server.info.uri}`);
 }
+
+process.on("unhandledRejection", err => {
+    server.logger().error(err);
+    process.exit(1);
+});
 
 // Go!
 init();
