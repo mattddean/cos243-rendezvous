@@ -9,7 +9,7 @@
     "hapi": "nodemon hapi-server.js"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "blipp": "^3.1.1",
     "hapi": "^17.7.0",
     "hapi-pino": "^5.1.0",
