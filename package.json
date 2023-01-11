@@ -15,7 +15,7 @@
     "hapi-pino": "^5.1.0",
     "inert": "^5.1.2",
     "joi": "^14.0.6",
-    "knex": "^0.15.2",
+    "knex": "^2.4.0",
     "material-design-icons-iconfont": "^4.0.2",
     "path": "^0.12.7",
     "pg": "^7.6.1",
